@@ -20,9 +20,7 @@ def parse_book_page(html_content, url):
     soup = BeautifulSoup(html_content, 'lxml')
     title_text = soup.find('h1').text
     formated_txt = re.sub(r'\s+', ' ', title_text)
-    parts = formated_txt.split(' :: ')
-    book_title = parts[0]
-    autor = parts[1]
+    book_title, autor = formated_txt.split(' :: ')
     all_links = soup.find('table', class_='d_book').findAll('a')
     img = soup.find('table', class_='d_book').find('img')['src']
     comments_tags = soup.findAll('div', class_='texts')
