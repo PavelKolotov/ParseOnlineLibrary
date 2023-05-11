@@ -69,7 +69,7 @@ def download_image(url, filename, folder='books/'):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Скачиваn книги в формате'
+    parser = argparse.ArgumentParser(description='Скачивает книги в формате'
                                                  ' txt с ресурса tululu.org')
     parser.add_argument('-s', '--start_id', help='Начальный id нкиги',
                         default=1, type=int)
