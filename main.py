@@ -14,7 +14,6 @@ import requests
 def check_for_redirect(response):
     if response.history:
         raise requests.HTTPError('Книга с данным id отсутствует')
-    return response
 
 
 def parse_book_page(html_content, url):
