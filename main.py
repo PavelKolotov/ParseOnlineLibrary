@@ -11,12 +11,9 @@ from pathvalidate import sanitize_filename
 import requests
 
 
-def check_for_redirect(url):
-    response = requests.get(url)
-    response.raise_for_status()
+def check_for_redirect(response):
     if response.history:
         raise requests.HTTPError('Книга с данным id отсутствует')
-    return response
 
 
 def parse_book_page(html_content, url):
@@ -45,6 +42,7 @@ def parse_book_page(html_content, url):
 def download_txt(url, filename, folder='books/'):
     response = requests.get(url)
     response.raise_for_status()
+    check_for_redirect(response)
     os.makedirs(folder, exist_ok=True)
     verified_name = sanitize_filename(filename)
     filepath = os.path.join(folder, f'{verified_name}.txt')
@@ -78,13 +76,14 @@ def main():
         url = f'https://tululu.org/b{book_id}/'
         while True:
             try:
-                response = check_for_redirect(url)
+                response = requests.get(url)
+                response.raise_for_status()
+                check_for_redirect(response)
                 book = parse_book_page(response.text, url)
                 book_url = book['book_url']
                 book_name = '.'.join([str(book_id), book['title']])
                 img_url = book['img_url']
                 img_name = book['img_name']
-                check_for_redirect(book_url)
                 download_txt(book_url, book_name, f'books/{book_name}')
                 download_image(img_url, img_name, f'books/{book_name}')
                 break
