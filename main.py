@@ -67,7 +67,7 @@ def main():
                                                  ' txt с ресурса tululu.org')
     parser.add_argument('-s', '--start_id', help='Начальный id нкиги',
                         default=1, type=int)
-    parser.add_argument('-e', '--end_id', help='Начальный id нкиги',
+    parser.add_argument('-e', '--end_id', help='Конечный id нкиги',
                         default=5, type=int)
     args = parser.parse_args()
     start_id = args.start_id
