@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import re
 import time
@@ -9,6 +10,8 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 import requests
+
+from main import parse_book_page, download_txt, download_image, check_for_redirect
 
 
 def get_books_url(html_content, url):
@@ -28,15 +31,41 @@ def main():
     parser.add_argument('-s', '--start_page', help='Начальная страница',
                         default=1, type=int)
     parser.add_argument('-e', '--end_page', help='Конечная страница',
-                        default=5, type=int)
+                        default=2, type=int)
     args = parser.parse_args()
     start_page = args.start_page
     end_page = args.end_page
+    books_description = []
     for page in range(start_page, end_page + 1):
+        print(page)
         url = f'https://tululu.org/l55/{page}'
         response = requests.get(url)
         response.raise_for_status()
-        get_books_url(response.text, url)
+        books_url = get_books_url(response.text, url)
+        for book_url in books_url:
+            while True:
+                try:
+                    response = requests.get(book_url)
+                    response.raise_for_status()
+                    check_for_redirect(response)
+                    book = parse_book_page(response.text, url)
+                    book_url = book['book_url']
+                    book_name = book['title']
+                    img_url = book['img_url']
+                    img_name = book['img_name']
+                    download_txt(book_url, book_name, f'books/{book_name}')
+                    download_image(img_url, img_name, f'books/{book_name}')
+                    books_description.append(book)
+                    break
+                except requests.HTTPError:
+                    print(f'Книга {book_name} отсутствует')
+                    break
+                except requests.ConnectionError:
+                    print(f'Проблема с интернет-соединением')
+                    time.sleep(5)
+
+    with open("books/books_description.json", "w") as my_file:
+        json.dump(books_description, my_file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
