@@ -1,13 +1,9 @@
 import argparse
 import json
-import os
-import re
 import time
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
-
-from pathvalidate import sanitize_filename
 
 import requests
 
@@ -17,9 +13,9 @@ from main import parse_book_page, download_txt, download_image, check_for_redire
 def get_books_url(html_content, url):
     books_url = []
     soup = BeautifulSoup(html_content, 'lxml')
-    books_tag = soup.findAll('table', class_='d_book')
+    books_tag = soup.select('table.d_book')
     for book_tag in books_tag:
-        book_id = book_tag.find('a')['href']
+        book_id = book_tag.select_one('a')['href']
         book_url = urljoin(url, book_id)
         books_url.append(book_url)
     return books_url
