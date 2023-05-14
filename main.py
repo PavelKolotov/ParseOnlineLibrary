@@ -22,7 +22,6 @@ def parse_book_page(html_content, url):
     formated_txt = re.sub(r'\s+', ' ', title_text)
     book_title, autor = formated_txt.split(' :: ')
     book_urls = soup.select('table.d_book a')
-    print(book_urls)
     img = soup.select_one('table.d_book img')['src']
     comments_tags = soup.select('div.texts')
     comments = [comment.span.text for comment in comments_tags]

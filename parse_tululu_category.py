@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import time
 from urllib.parse import urljoin
 
@@ -27,12 +28,24 @@ def main():
     parser.add_argument('-s', '--start_page', help='Начальная страница',
                         default=1, type=int)
     parser.add_argument('-e', '--end_page', help='Конечная страница',
-                        default=2, type=int)
+                        default=702, type=int)
+    parser.add_argument('-d', '--dest_folder', help='Путь к каталогу',
+                        default='books')
+    parser.add_argument('-j', '--json_path', help='Путь к json файлу с результатами',
+                        default='books')
+    parser.add_argument('-s_i', '--skip_img', help='Не скачивать обложки',
+                        action="store_true")
+    parser.add_argument('-s_t', '--skip_txt', help='Не скачивать книги',
+                        action="store_true")
     args = parser.parse_args()
     start_page = args.start_page
     end_page = args.end_page
+    folder = args.dest_folder
+    json_path = args.json_path
+    skip_img = args.skip_img
+    skip_txt = args.skip_txt
     books_description = []
-    for page in range(start_page, end_page + 1):
+    for page in range(start_page, end_page):
         print(page)
         url = f'https://tululu.org/l55/{page}'
         response = requests.get(url)
@@ -49,8 +62,10 @@ def main():
                     book_name = book['title']
                     img_url = book['img_url']
                     img_name = book['img_name']
-                    download_txt(book_url, book_name, f'books/{book_name}')
-                    download_image(img_url, img_name, f'books/{book_name}')
+                    if not skip_txt:
+                        download_txt(book_url, book_name, f'{folder}/{book_name}')
+                    if not skip_img:
+                        download_image(img_url, img_name, f'{folder}/{book_name}')
                     books_description.append(book)
                     break
                 except requests.HTTPError:
@@ -59,8 +74,8 @@ def main():
                 except requests.ConnectionError:
                     print(f'Проблема с интернет-соединением')
                     time.sleep(5)
-
-    with open("books/books_description.json", "w") as my_file:
+    os.makedirs(json_path, exist_ok=True)
+    with open(f'{json_path}/books_description.json', 'w') as my_file:
         json.dump(books_description, my_file, ensure_ascii=False, indent=4)
 
 
