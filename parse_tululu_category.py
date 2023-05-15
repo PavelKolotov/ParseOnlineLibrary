@@ -46,11 +46,18 @@ def main():
     skip_txt = args.skip_txt
     books_description = []
     for page in range(start_page, end_page):
-        url = f'https://tululu.org/l55/{page}'
-        response = requests.get(url)
-        response.raise_for_status()
-        check_for_redirect(response)
-        books_url = get_books_url(response.text, url)
+        try:
+            url = f'https://tululu.org/l55/{page}'
+            response = requests.get(url)
+            response.raise_for_status()
+            check_for_redirect(response)
+            books_url = get_books_url(response.text, url)
+        except requests.HTTPError:
+            print(f'Страница отсутствует')
+            break
+        except requests.ConnectionError:
+            print(f'Проблема с интернет-соединением')
+            break
         for book_url in books_url:
             while True:
                 try:
