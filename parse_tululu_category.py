@@ -49,6 +49,7 @@ def main():
         url = f'https://tululu.org/l55/{page}'
         response = requests.get(url)
         response.raise_for_status()
+        check_for_redirect(response)
         books_url = get_books_url(response.text, url)
         for book_url in books_url:
             while True:
