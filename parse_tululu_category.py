@@ -46,7 +46,6 @@ def main():
     skip_txt = args.skip_txt
     books_description = []
     for page in range(start_page, end_page):
-        print(page)
         url = f'https://tululu.org/l55/{page}'
         response = requests.get(url)
         response.raise_for_status()
