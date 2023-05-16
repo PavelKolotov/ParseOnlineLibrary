@@ -57,6 +57,7 @@ def main():
             break
         except requests.ConnectionError:
             print(f'Проблема с интернет-соединением')
+            time.sleep(5)
             break
         for book_url in book_urls:
             while True:
