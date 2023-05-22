@@ -34,7 +34,8 @@ def parse_book_page(html_content, url):
         'img_url':  urljoin(url, img),
         'img_name': os.path.basename(img),
         'comments': comments,
-        'genres': genres
+        'genres': genres,
+        'book_name': f'{sanitize_filename(book_title)}.txt'
     }
     return book
 
@@ -51,7 +52,7 @@ def download_txt(url, filename, folder='books/'):
 
 
 
-def download_image(url, filename, folder='books/'):
+def download_image(url, filename, folder='images/'):
     os.makedirs(folder, exist_ok=True)
     response = requests.get(url)
     response.raise_for_status()

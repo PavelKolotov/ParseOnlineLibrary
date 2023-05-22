@@ -71,9 +71,9 @@ def main():
                     img_url = book['img_url']
                     img_name = book['img_name']
                     if not skip_txt:
-                        download_txt(book_url, book_name, f'{folder}/{book_name}')
+                        download_txt(book_url, book_name, f'{folder}')
                     if not skip_img:
-                        download_image(img_url, img_name, f'{folder}/{book_name}')
+                        download_image(img_url, img_name)
                     book_descriptions.append(book)
                     break
                 except requests.HTTPError:
